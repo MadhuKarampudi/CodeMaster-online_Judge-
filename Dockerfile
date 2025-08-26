@@ -38,8 +38,19 @@ RUN adduser --disabled-password --gecos '' appuser && \
 # Switch to non-root user
 USER appuser
 
-# Collect static files as non-root user
+# Collect static files and setup database
 RUN python manage.py collectstatic --noinput
+RUN python manage.py migrate
+RUN python -c "
+import django
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'online_judge_project.settings')
+django.setup()
+from django.contrib.auth import get_user_model
+User = get_user_model()
+if not User.objects.filter(username='admin').exists():
+    User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+"
 
 # Expose port
 EXPOSE 8000

@@ -12,6 +12,7 @@ db.sqlite3-journal
 .venv
 env/
 venv/
+myenv/
 
 # IDE
 .vscode/
