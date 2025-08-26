@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy entrypoint script first
 COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh && chown root:root /app/entrypoint.sh
 
 # Copy the application code
 COPY . .
@@ -37,7 +37,8 @@ RUN mkdir -p /app/data /app/staticfiles /app/media
 # Create a non-root user for security (before collectstatic)
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /app && \
-    chmod -R 755 /app/data
+    chmod -R 755 /app/data && \
+    chown appuser:appuser /app/entrypoint.sh
 
 # Switch to non-root user
 USER appuser
