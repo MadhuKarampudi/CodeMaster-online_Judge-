@@ -100,6 +100,15 @@ DATABASES = {
     }
 }
 
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -149,8 +158,8 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# Static files storage for production
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Static files storage for production - use simpler storage to avoid manifest issues
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files configuration (for file uploads if needed)
 MEDIA_URL = '/media/'
