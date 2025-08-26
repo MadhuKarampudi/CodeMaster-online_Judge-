@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--+-swv*oh+zy2ziv3fx(0n)x-l=&5gigjy!o!##_b89p(0y#g1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True  # Temporarily enable for CSRF debugging
 
-ALLOWED_HOSTS = ['*']  # Allow all hosts for development
+ALLOWED_HOSTS = ['*', 'codemaster-onlinejudge-production.up.railway.app', '.railway.app']
 
 
 # Application definition
@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # CORS middleware should be at the top
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add WhiteNoise for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -211,7 +212,15 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# For development, allow all origins (remove in production)
+# CSRF Settings for Railway deployment
+CSRF_TRUSTED_ORIGINS = [
+    'https://codemaster-onlinejudge-production.up.railway.app',
+    'https://*.railway.app',
+]
+
+# Security settings for production
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False  # Railway handles SSL termination in production
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Django Allauth configuration
