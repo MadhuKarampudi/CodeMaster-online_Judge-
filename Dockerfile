@@ -24,6 +24,10 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy entrypoint script first
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # Copy the application code
 COPY . .
 
@@ -38,26 +42,12 @@ RUN adduser --disabled-password --gecos '' appuser && \
 # Switch to non-root user
 USER appuser
 
-# Collect static files and setup database
+# Collect static files as non-root user
 RUN python manage.py collectstatic --noinput
-RUN python manage.py migrate
-RUN python -c "
-import django
-import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'online_judge_project.settings')
-django.setup()
-from django.contrib.auth import get_user_model
-User = get_user_model()
-if not User.objects.filter(username='admin').exists():
-    User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-"
 
 # Expose port
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/ || exit 1
-
 # Run the application with gunicorn for production
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "online_judge_project.wsgi:application"]
