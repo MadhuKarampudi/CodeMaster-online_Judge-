@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load markdown_filter %}
+
+{% block title %}{{ problem.title }} - CodeMaster{% endblock %}
+
+{% block extra_css %}
+<style>
+    .problem-detail-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .problem-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: var(--shadow-light);
+        background-color: var(--light-card-background);
+        transition: all 0.3s ease;
+    }
+    body.dark-mode .problem-card {
+        background-color: var(--dark-card-background);
+        box-shadow: var(--shadow-dark);
+    }
+
+    .problem-description {
+        line-height: 1.8;
+        font-size: 1.05rem;
+        color: var(--light-text);
+        white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    }
+    body.dark-mode .problem-description {
+        color: #ffffff; /* Force white in dark mode for visibility */
+    }
+
+    .sample-test-cases .card {
+        border: 1px solid var(--light-border-color);
+        background-color: var(--light-background);
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
+        box-shadow: none;
+    }
+    body.dark-mode .sample-test-cases .card {
+        border: 1px solid var(--dark-border-color);
+        background-color: var(--dark-background);
+    }
+
+    .sample-test-cases pre {
+        background-color: #2d3748;
+        color: #e2e8f0;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+
+    .sticky-top {
+        top: 80px !important; /* Adjust for navbar height */
+    }
+
+    .list-group-item {
+        background-color: var(--light-card-background);
+        color: var(--light-text);
+        border-color: var(--light-border-color);
+    }
+    body.dark-mode .list-group-item {
+        background-color: var(--dark-card-background);
+        color: var(--dark-text);
+        border-color: var(--dark-border-color);
+    }
+
+    .list-group-item span.badge {
+        font-size: 0.85em;
+        padding: 0.4em 0.7em;
+        border-radius: 0.4rem;
+    }
+
+    .btn-outline-secondary {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+    }
+    .btn-outline-secondary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container problem-detail-container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card problem-card">
+                <div class="card-body">
+                    <h1 class="display-5 fw-bold">{{ problem.title }}</h1>
+                    <hr>
+                    <div class="problem-description">
+                        {{ problem.description|markdownify|safe }}
+                    </div>
+
+                    {% if problem.testcase_set.all %}
+                        <h4 class="mt-5">Sample Test Cases</h4>
+                        <div class="sample-test-cases">
+                            {% for test_case in problem.testcase_set.all %}
+                                {% if test_case.is_sample %}
+                                <div class="card my-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <strong>Input:</strong>
+                                                <pre><code>{{ test_case.input_data }}</code></pre>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Output:</strong>
+                                                <pre><code>{{ test_case.expected_output }}</code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card sticky-top">
+                <div class="card-body">
+                    <h4 class="card-title">Problem Details</h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Difficulty
+                            <span class="badge bg-{{ problem.difficulty|lower }}">{{ problem.difficulty }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Time Limit
+                            <span>{{ problem.time_limit }}s</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Memory Limit
+                            <span>{{ problem.memory_limit }}MB</span>
+                        </li>
+                    </ul>
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'problems:solve' problem.pk %}" class="btn btn-primary btn-lg">Solve Problem</a>
+                        <a href="{% url 'submissions:submit' problem.pk %}" class="btn btn-outline-secondary">Submit Solution</a>
+                        {% if user.is_staff %}
+                            <a href="{% url 'problems:manage_test_cases' problem.pk %}" class="btn btn-info">Manage Test Cases</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

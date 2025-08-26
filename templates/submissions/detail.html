@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Submission #{{ submission.id }} - CodeMaster{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material-darker.min.css">
+<style>
+    body.dark-mode .card {
+        background-color: var(--dark-card-background);
+        border-color: var(--dark-border-color);
+    }
+    body.dark-mode .card-header {
+        background-color: #2a2a2a;
+        border-bottom-color: var(--dark-border-color);
+    }
+    body.dark-mode .list-group-item {
+        background-color: var(--dark-card-background);
+        border-color: var(--dark-border-color);
+        color: var(--dark-text);
+    }
+    body.dark-mode .CodeMirror {
+        border: 1px solid var(--dark-border-color);
+    }
+    body.dark-mode pre {
+        background-color: #2d3748;
+        color: #e2e8f0;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--dark-border-color);
+    }
+    body.dark-mode .table {
+        color: var(--dark-text);
+        background-color: var(--dark-card-background);
+        border-color: var(--dark-border-color);
+    }
+    .code-container {
+        position: relative;
+    }
+    .CodeMirror {
+        height: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Submission Details</h4>
+                    <div>
+                        <span class="badge bg-{{ submission.get_status_color }}">{{ submission.status }}</span>
+                        <button class="btn btn-sm btn-outline-primary ms-2" onclick="location.reload()">Refresh</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="code-container">
+                        <textarea id="codeEditor">{{ submission.code }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Information</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Problem:</strong> <a href="{% url 'problems:detail' submission.problem.pk %}">{{ submission.problem.title }}</a></li>
+                        <li class="list-group-item"><strong>Language:</strong> {{ submission.get_language_display }}</li>
+                        <li class="list-group-item"><strong>Submitted:</strong> {{ submission.submitted_at|timesince }} ago</li>
+                        <li class="list-group-item"><strong>Execution Time:</strong> {{ submission.execution_time|default_if_none:"N/A" }}</li>
+                        <li class="list-group-item"><strong>Memory Used:</strong> {{ submission.memory_used|default_if_none:"N/A" }}</li>
+                    </ul>
+                </div>
+            </div>
+            {% if submission.error %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">Error</h5>
+                    <pre class="bg-light p-2 rounded"><code>{{ submission.error }}</code></pre>
+                </div>
+            </div>
+            {% endif %}
+            {% if submission.output %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Output</h5>
+                    <pre class="bg-light p-2 rounded"><code>{{ submission.output }}</code></pre>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+            lineNumbers: true,
+            mode: "{{ submission.language }}" === "python" ? "python" : "text/x-c++src",
+            theme: 'material-darker',
+            readOnly: true
+        });
+    });
+</script>
+{% endblock %}

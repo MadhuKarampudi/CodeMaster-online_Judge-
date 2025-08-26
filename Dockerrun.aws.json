@@ -1,0 +1,60 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "web",
+      "image": "karamveer/online-judge:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 8000
+        }
+      ],
+      "environment": [
+        {
+          "name": "DEBUG",
+          "value": "False"
+        },
+        {
+          "name": "USE_DOCKER",
+          "value": "false"
+        },
+        {
+          "name": "DJANGO_SETTINGS_MODULE",
+          "value": "online_judge_project.production_settings"
+        }
+      ],
+      "links": [
+        "redis"
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "app-data",
+          "containerPath": "/app/data"
+        }
+      ]
+    },
+    {
+      "name": "redis",
+      "image": "redis:7-alpine",
+      "essential": false,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 6379,
+          "containerPort": 6379
+        }
+      ]
+    }
+  ],
+  "volumes": [
+    {
+      "name": "app-data",
+      "host": {
+        "sourcePath": "/var/app/data"
+      }
+    }
+  ]
+}

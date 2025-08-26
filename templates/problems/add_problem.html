@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Add New Problem{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg p-4">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Add New Problem</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+
+                        <hr>
+                        <h4 class="mt-4">Test Cases</h4>
+                        
+                        {{ formset.management_form }}
+                        
+                        <div id="testcase-form-list">
+                            {% for form in formset %}
+                                <div class="testcase-form">
+                                    {{ form|crispy }}
+                                    <hr>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <button type="button" id="add-form" class="btn btn-secondary mt-2">Add Another Test Case</button>
+
+                        <button type="submit" class="btn btn-primary btn-block mt-4">Submit Problem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="empty-form" style="display: none;">
+    <div class="testcase-form">
+        {{ formset.empty_form|crispy }}
+        <hr>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addMoreBtn = document.getElementById('add-form');
+    const formList = document.getElementById('testcase-form-list');
+    const emptyFormTemplate = document.getElementById('empty-form').innerHTML;
+    const totalFormsInput = document.querySelector('input[name="testcase_set-TOTAL_FORMS"]');
+    
+    addMoreBtn.addEventListener('click', function() {
+        let formNum = parseInt(totalFormsInput.value);
+        let newForm = emptyFormTemplate.replace(/__prefix__/g, formNum);
+        formList.insertAdjacentHTML('beforeend', newForm);
+        totalFormsInput.value = formNum + 1;
+    });
+});
+</script>
+{% endblock %}

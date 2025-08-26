@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to CodeMaster{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* More vibrant gradient */
+        color: white;
+        padding: 150px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        /* Add a subtle overlay pattern */
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zm0 18v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM12 34v-4H10v4H6v2h4v4h2v-4h4v-2h-4zm0-30V0H10v4H6v2h4v4h2V6h4V4h-4zm0 18v-4H10v4H6v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        background-size: 60px 60px, cover;
+        background-repeat: repeat, no-repeat;
+    }
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%); /* Slightly more visible pulse */
+        animation: hero-pulse 15s infinite alternate;
+    }
+    @keyframes hero-pulse {
+        0% { transform: scale(1); opacity: 0.6; } /* Adjusted opacity */
+        100% { transform: scale(1.2); opacity: 0.8; } /* Adjusted opacity */
+    }
+
+    .hero-title {
+        font-size: 4.5rem;
+        font-weight: 800;
+        margin-bottom: 25px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 50px;
+        opacity: 0.95;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-section .btn-light {
+        font-weight: 700;
+        padding: 15px 40px;
+        border-radius: 50px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+    .hero-section .btn-light:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+    }
+
+    .features-section {
+        padding: 100px 0;
+        background-color: var(--light-background);
+    }
+    body.dark-mode .features-section {
+        background-color: var(--dark-background);
+    }
+
+    .feature-card {
+        text-align: center;
+        padding: 40px;
+        min-height: 280px; /* Ensure a minimum height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .feature-card h3 {
+        color: var(--light-text); /* Ensure heading is visible */
+    }
+    body.dark-mode .feature-card h3 {
+        color: var(--dark-text);
+    }
+    .feature-card p {
+        color: #6c757d; /* Specific muted color for description */
+    }
+    body.dark-mode .feature-card p {
+        color: #a0aec0; /* Specific muted color for description in dark mode */
+    }
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    body.dark-mode .feature-card:hover {
+        box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    }
+
+    .feature-icon {
+        font-size: 4rem;
+        color: var(--primary-color);
+        margin-bottom: 25px;
+        transition: transform 0.3s ease;
+    }
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1);
+        color: var(--secondary-color);
+    }
+
+    .stats-section {
+        background-color: var(--light-border-color); /* Use a lighter background for contrast */
+        padding: 80px 0;
+        border-top: 1px solid var(--light-border-color);
+        border-bottom: 1px solid var(--light-border-color);
+    }
+    body.dark-mode .stats-section {
+        background-color: var(--dark-card-background);
+        border-top: 1px solid var(--dark-border-color);
+        border-bottom: 1px solid var(--dark-border-color);
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 4rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+
+    .stat-item .text-muted {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--light-text) !important;
+    }
+    body.dark-mode .stat-item .text-muted {
+        color: var(--dark-text) !important;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+        color: white;
+        padding: 100px 0;
+        text-align: center;
+    }
+    .cta-section .btn-light {
+        font-weight: 700;
+        padding: 15px 40px;
+        border-radius: 50px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+    .cta-section .btn-light:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">Welcome to CodeMaster</h1>
+        <p class="hero-subtitle">The ultimate platform to sharpen your coding skills and prepare for technical interviews.</p>
+        <div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'problems:list' %}" class="btn btn-light btn-lg">Browse Problems</a>
+            {% else %}
+                <a href="{% url 'account_signup' %}" class="btn btn-light btn-lg">Get Started for Free</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold">Why CodeMaster?</h2>
+                <p class="lead text-muted">Everything you need to excel in your coding journey.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="feature-icon"><i class="fas fa-laptop-code"></i></div>
+                    <h3 class="h4">Diverse Problem Set</h3>
+                    <p class="text-muted">Access a vast library of problems ranging from easy to hard, covering all essential data structures and algorithms.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="feature-icon"><i class="fas fa-cogs"></i></div>
+                    <h3 class="h4">Real-time Judging</h3>
+                    <p class="text-muted">Get instant feedback on your solutions with our powerful and reliable code judge.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card">
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="h4">Track Your Progress</h3>
+                    <p class="text-muted">Monitor your submission history, accuracy, and progress over time to identify areas for improvement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <div class="stat-number">1,000+</div>
+                    <div class="text-muted">Problems to Solve</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <div class="stat-number">10,000+</div>
+                    <div class="text-muted">Active Users</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <div class="stat-number">500,000+</div>
+                    <div class="text-muted">Submissions Judged</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+{% if not user.is_authenticated %}
+<section class="cta-section">
+    <div class="container">
+        <h2 class="display-5 fw-bold">Ready to Elevate Your Skills?</h2>
+        <p class="lead mb-4">Join our community and start your journey to becoming a coding master.</p>
+        <a href="{% url 'account_signup' %}" class="btn btn-light btn-lg">Sign Up Now</a>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

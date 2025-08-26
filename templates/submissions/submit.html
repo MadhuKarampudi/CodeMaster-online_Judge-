@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit - {{ problem.title }} - Online Judge{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-code"></i> Submit Solution
+                </h4>
+                <small class="text-muted">Problem: {{ problem.title }}</small>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.language.id_for_label }}" class="form-label">
+                            <i class="fas fa-cog"></i> Programming Language
+                        </label>
+                        {{ form.language }}
+                        {% if form.language.errors %}
+                            <div class="text-danger small">
+                                {{ form.language.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.code.id_for_label }}" class="form-label">
+                            <i class="fas fa-file-code"></i> Source Code
+                        </label>
+                        {{ form.code }}
+                        {% if form.code.errors %}
+                            <div class="text-danger small">
+                                {{ form.code.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'problems:detail' problem.pk %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Problem
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Code
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb"></i> Submission Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Make sure your code compiles without errors
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Test with the provided sample cases
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Consider edge cases and constraints
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Optimize for time and memory limits
+                    </li>
+                </ul>
+                
+                <hr>
+                
+                <h6><i class="fas fa-info-circle"></i> Problem Constraints</h6>
+                <ul class="list-unstyled small text-muted">
+                    <li><strong>Time Limit:</strong> {{ problem.time_limit }}s</li>
+                    <li><strong>Memory Limit:</strong> {{ problem.memory_limit }}MB</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-code"></i> Language Templates
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="languageTemplates">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pythonTemplate">
+                                Python
+                            </button>
+                        </h2>
+                        <div id="pythonTemplate" class="accordion-collapse collapse" data-bs-parent="#languageTemplates">
+                            <div class="accordion-body">
+                                <pre class="small"><code># Read input
+# Process data
+# Print output
+print("Hello World")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cppTemplate">
+                                C++
+                            </button>
+                        </h2>
+                        <div id="cppTemplate" class="accordion-collapse collapse" data-bs-parent="#languageTemplates">
+                            <div class="accordion-body">
+                                <pre class="small"><code>#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    // Your code here
+    cout &lt;&lt; "Hello World" &lt;&lt; endl;
+    return 0;
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}My Submissions - CodeMaster{% endblock %}
+
+{% block extra_css %}
+<style>
+    body.dark-mode .table {
+        color: var(--dark-text);
+        background-color: var(--dark-card-background);
+        border-color: var(--dark-border-color);
+    }
+    body.dark-mode .table-hover tbody tr:hover {
+        color: var(--dark-text);
+        background-color: #2a2a2a;
+    }
+    body.dark-mode .table thead th {
+        border-bottom-width: 2px;
+    }
+    body.dark-mode .page-link {
+        background-color: var(--dark-card-background);
+        border-color: var(--dark-border-color);
+        color: var(--dark-text);
+    }
+    body.dark-mode .page-item.disabled .page-link {
+        background-color: #2a2a2a;
+        border-color: var(--dark-border-color);
+        color: #6c757d;
+    }
+    body.dark-mode .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="display-5 fw-bold mb-4">Submission History</h1>
+
+    <div class="card">
+        <div class="card-body">
+            {% if submissions %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Problem</th>
+                                <th>Status</th>
+                                <th>Language</th>
+                                <th>Submitted</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for submission in submissions %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'problems:detail' submission.problem.pk %}" class="text-decoration-none fw-bold">{{ submission.problem.title }}</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ submission.get_status_color }}">{{ submission.status }}</span>
+                                    </td>
+                                    <td>{{ submission.get_language_display }}</td>
+                                    <td>{{ submission.submitted_at|timesince }} ago</td>
+                                    <td class="text-end">
+                                        <a href="{% url 'submissions:detail' submission.pk %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if is_paginated %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                            {% endif %}
+
+                            {% for i in paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <h4>No Submissions Yet</h4>
+                    <p class="text-muted">You haven't made any submissions. Start solving problems to see your history here.</p>
+                    <a href="{% url 'problems:list' %}" class="btn btn-primary">Browse Problems</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

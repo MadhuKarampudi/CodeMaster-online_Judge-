@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Test Cases for {{ problem.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Test Cases for "{{ problem.title }}"</h2>
+    <hr>
+
+    <!-- Form to add a new test case -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Add New Test Case</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Add Test Case</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- List of existing test cases -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Existing Test Cases</h4>
+        </div>
+        <div class="card-body">
+            {% if test_cases %}
+                <ul class="list-group">
+                    {% for test_case in test_cases %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Input:</strong>
+                                <pre>{{ test_case.input_data }}</pre>
+                                <strong>Output:</strong>
+                                <pre>{{ test_case.expected_output }}</pre>
+                                {% if test_case.is_sample %}
+                                    <span class="badge bg-info">Sample</span>
+                                {% endif %}
+                            </div>
+                            <form method="post" onsubmit="return confirm('Are you sure you want to delete this test case?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="test_case_id" value="{{ test_case.id }}">
+                                <button type="submit" name="delete_test_case" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No test cases found for this problem yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'problems:detail' problem.pk %}" class="btn btn-secondary">Back to Problem</a>
+    </div>
+</div>
+{% endblock %}

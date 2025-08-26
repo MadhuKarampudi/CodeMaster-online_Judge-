@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load user_filters %}
+
+{% block title %}{{ profile.user.username }}'s Profile - CodeMaster{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <img src="https://www.gravatar.com/avatar/{{ profile.user.email|md5 }}?d=identicon&s=150" alt="{{ profile.user.username }}" class="rounded-circle mb-3">
+                    <h4 class="card-title">{{ profile.user.username }}</h4>
+                    <p class="text-muted">{{ profile.user.email }}</p>
+                    {% if profile.bio %}
+                        <p class="card-text">{{ profile.bio }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Statistics</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Daily Streak: {{ profile.daily_streak }}</h6>
+                            <hr>
+                            <h6>Total Problems Solved: {{ profile.solved_problems_count }}</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Easy: {{ profile.solved_easy_count }}</h6>
+                            <h6>Medium: {{ profile.solved_medium_count }}</h6>
+                            <h6>Hard: {{ profile.solved_hard_count }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
