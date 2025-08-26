@@ -1,0 +1,14 @@
+{
+    "name": "CodeMaster Online Judge",
+    "short_name": "CodeMaster",
+    "icons": [
+        {
+            "src": "/static/images/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ],
+    "theme_color": "#4f46e5",
+    "background_color": "#ffffff",
+    "display": "standalone"
+}

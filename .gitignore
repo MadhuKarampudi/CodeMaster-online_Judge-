@@ -29,7 +29,7 @@ Thumbs.db
 
 # Static files (will be collected)
 /staticfiles/
-/static/
+# /static/  # Allow static files for favicon
 
 # Media files
 /media/
