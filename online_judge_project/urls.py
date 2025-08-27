@@ -26,23 +26,15 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
+def simple_home(request):
+    return HttpResponse("<h1>CodeMaster Online Judge</h1><p>Welcome! <a href='/auth/login/'>Login</a> | <a href='/auth/signup/'>Signup</a></p>")
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', problem_views.home, name='home'),
-    
-    # Authentication URLs
-    path('problems/', include('problems.urls')),
-    path('submissions/', include('submissions.urls')),
-    path('users/', include('users.urls')),
+    path('', simple_home, name='home'),
     path('auth/login/', user_views.login_view, name='login'),
     path('auth/signup/', user_views.signup_view, name='signup'),
     path('auth/logout/', user_views.logout_view, name='logout'),
-    path('api/', include('problems.api_urls')),
-    path('api/submissions/', include('submissions.api_urls')),
-    path('api/users/', include('users.api_urls')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
 
 if settings.DEBUG:
