@@ -50,4 +50,4 @@ RUN python manage.py collectstatic --noinput
 EXPOSE 8000
 
 # Run the application with gunicorn for production
-CMD ["/bin/bash", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && python manage.py shell -c \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(email='admin@example.com').delete(); User.objects.create_superuser('admin', 'admin@example.com', 'admin123')\" && gunicorn --bind 0.0.0.0:8000 --workers 2 online_judge_project.wsgi:application"]
+CMD ["/bin/bash", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && python manage.py shell -c \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(email='admin@example.com').delete(); User.objects.create_user('admin', 'admin@example.com', 'admin123', is_staff=True, is_superuser=True)\" && gunicorn --bind 0.0.0.0:8000 --workers 2 online_judge_project.wsgi:application"]
