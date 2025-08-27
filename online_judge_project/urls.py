@@ -16,15 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from users import views as user_views
 
 def redirect_to_login(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/dashboard/')
     return HttpResponseRedirect('/auth/login/')
+
+def dashboard_view(request):
+    return HttpResponse("<h1>Welcome to CodeMaster!</h1><p>You are logged in as: " + str(request.user.email) + "</p><p><a href='/auth/logout/'>Logout</a></p>")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', redirect_to_login, name='home'),
+    path('dashboard/', dashboard_view, name='dashboard'),
     path('auth/login/', user_views.login_view, name='login'),
     path('auth/signup/', user_views.signup_view, name='signup'),
     path('auth/logout/', user_views.logout_view, name='logout'),

@@ -9,7 +9,7 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Login</h2>
+                    <h2 class="card-title text-center mb-4">Sign in to your Online Judge account</h2>
                     
                     {% if messages %}
                         {% for message in messages %}
@@ -23,7 +23,7 @@
                     <form method="post">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">Email Address</label>
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
                         <div class="mb-3">
@@ -34,11 +34,12 @@
                             <input type="checkbox" class="form-check-input" id="remember">
                             <label class="form-check-label" for="remember">Remember me</label>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                        <button type="submit" class="btn btn-primary w-100">Sign In</button>
                     </form>
                     
                     <div class="text-center mt-3">
-                        <p>Don't have an account? <a href="{% url 'users:register' %}">Sign up</a></p>
+                        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+                        <p><a href="#">Forgot your password?</a></p>
                     </div>
                 </div>
             </div>
