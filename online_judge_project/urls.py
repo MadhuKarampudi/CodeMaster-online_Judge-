@@ -30,27 +30,20 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
     
     # Authentication URLs
-    path('accounts/', include('allauth.urls')),  # Django-allauth URLs (includes Google OAuth)
-    path('auth/', include('users.urls')),  # Custom authentication URLs
-    
-    # API URLs for JWT authentication
+    path('problems/', include('problems.urls')),
+    path('submissions/', include('submissions.urls')),
+    path('users/', include('users.urls')),
+    path('auth/login/', user_views.login_view, name='login'),
+    path('auth/signup/', user_views.signup_view, name='signup'),
+    path('auth/logout/', user_views.logout_view, name='logout'),
+    path('api/', include('problems.api_urls')),
+    path('api/submissions/', include('submissions.api_urls')),
+    path('api/users/', include('users.api_urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('api/auth/', include('users.api_urls')),  # Custom API authentication endpoints
-    
-    # Application URLs
-    path('problems/', include('problems.urls')),
-    path('submissions/', include('submissions.urls')),
-    
-    # API URLs for applications
-    path('api/problems/', include('problems.api_urls')),
-    path('api/submissions/', include('submissions.api_urls')),
-    path('api/users/', include('users.api_urls')),
 ]
 
-# Serve media files during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
-
