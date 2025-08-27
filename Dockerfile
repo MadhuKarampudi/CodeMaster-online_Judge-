@@ -43,10 +43,11 @@ RUN adduser --disabled-password --gecos '' appuser && \
 # Switch to non-root user
 USER appuser
 
-# Skip collectstatic - staticfiles app not installed
+# Collect static files as non-root user
+RUN python manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8000
 
 # Run the application with Django development server for debugging
-CMD ["/bin/bash", "-c", "python manage.py runserver 0.0.0.0:${PORT:-8000}"]
+CMD ["/bin/bash", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && python manage.py shell -c \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(email='admin@example.com').delete(); User.objects.create_superuser('admin', 'admin@example.com', 'admin123')\" && python manage.py runserver 0.0.0.0:${PORT:-8000}"]
