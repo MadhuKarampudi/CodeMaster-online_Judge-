@@ -213,7 +213,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False  # Railway handles SSL termination in production
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Django Allauth configuration
+# Site configuration
 SITE_ID = 1
 
 # Login and logout redirect URLs
