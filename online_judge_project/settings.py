@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--+-swv*oh+zy2ziv3fx(0n)x-l=&5gigjy!o!##_b89p(0y#g1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # Temporarily enable for CSRF debugging
+DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'codemaster-onlinejudge-production.up.railway.app', '.railway.app']
 
@@ -63,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # Required for allauth
 ]
 
 ROOT_URLCONF = 'online_judge_project.urls'
