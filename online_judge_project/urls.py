@@ -15,28 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
-from problems import views as problem_views
-from users import views as user_views
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
+from django.urls import path
+from django.http import HttpResponse
 
-def simple_home(request):
-    return HttpResponse("<h1>CodeMaster Online Judge</h1><p>Welcome! <a href='/auth/login/'>Login</a> | <a href='/auth/signup/'>Signup</a></p>")
+def hello_world(request):
+    return HttpResponse("<h1>Hello Railway!</h1><p>Django is working!</p>")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', simple_home, name='home'),
-    path('auth/login/', user_views.login_view, name='login'),
-    path('auth/signup/', user_views.signup_view, name='signup'),
-    path('auth/logout/', user_views.logout_view, name='logout'),
+    path('', hello_world, name='home'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
