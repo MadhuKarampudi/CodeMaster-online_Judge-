@@ -1,9 +1,21 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from datetime import date, timedelta
+
+class User(AbstractUser):
+    """Custom user model"""
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=30, blank=True)
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+    
+    def __str__(self):
+        return self.email
 
 class UserProfile(models.Model):
     """Extended user profile to store additional information"""
@@ -28,12 +40,14 @@ class UserProfile(models.Model):
     
     def recalculate_stats(self):
         """Recalculates aggregate stats for the user."""
-        # Simplified - no submissions dependency for now
-        self.total_submissions = 0
-        self.solved_problems_count = 0
-        self.solved_easy_count = 0
-        self.solved_medium_count = 0
-        self.solved_hard_count = 0
+        from submissions.models import Submission
+        
+        self.total_submissions = Submission.objects.filter(user=self.user).count()
+        accepted_submissions = Submission.objects.filter(user=self.user, status='Accepted')
+        self.solved_problems_count = accepted_submissions.values('problem').distinct().count()
+        self.solved_easy_count = accepted_submissions.filter(problem__difficulty='Easy').values('problem').distinct().count()
+        self.solved_medium_count = accepted_submissions.filter(problem__difficulty='Medium').values('problem').distinct().count()
+        self.solved_hard_count = accepted_submissions.filter(problem__difficulty='Hard').values('problem').distinct().count()
         self.save()
 
     def update_streak(self, submission):
@@ -59,8 +73,15 @@ class UserProfile(models.Model):
             self.update_streak(submission)
 
 
-# Signal to create UserProfile when a User is created
+# Signal to create/save UserProfile when a User is created/saved
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+    # Ensure userprofile exists before saving, especially if it was just created
+    # This line might cause issues if userprofile is not yet created or if it's already saved
+    # For now, let's ensure it's not called if 'created' is True and it was just created
+    if not created and hasattr(instance, 'userprofile'):
+        instance.userprofile.save()
+    elif created:
+        pass # Do nothing, it's already saved

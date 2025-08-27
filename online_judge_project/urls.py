@@ -16,22 +16,41 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.http import HttpResponseRedirect, HttpResponse
-from users import views as user_views
-
-def redirect_to_login(request):
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/dashboard/')
-    return HttpResponseRedirect('/auth/login/')
-
-def dashboard_view(request):
-    return HttpResponse("<h1>Welcome to CodeMaster!</h1><p>You are logged in as: " + str(request.user.email) + "</p><p><a href='/auth/logout/'>Logout</a></p>")
+from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', redirect_to_login, name='home'),
-    path('dashboard/', dashboard_view, name='dashboard'),
-    path('auth/login/', user_views.login_view, name='login'),
-    path('auth/signup/', user_views.signup_view, name='signup'),
-    path('auth/logout/', user_views.logout_view, name='logout'),
+    path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    
+    # Authentication URLs
+    path('accounts/', include('allauth.urls')),  # Django-allauth URLs (includes Google OAuth)
+    path('auth/', include('users.urls')),  # Custom authentication URLs
+    
+    # API URLs for JWT authentication
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('api/auth/', include('users.api_urls')),  # Custom API authentication endpoints
+    
+    # Application URLs
+    path('problems/', include('problems.urls')),
+    path('submissions/', include('submissions.urls')),
+    
+    # API URLs for applications
+    path('api/problems/', include('problems.api_urls')),
+    path('api/submissions/', include('submissions.api_urls')),
+    path('api/users/', include('users.api_urls')),
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+
