@@ -43,8 +43,7 @@ RUN adduser --disabled-password --gecos '' appuser && \
 # Switch to non-root user
 USER appuser
 
-# Collect static files as non-root user
-RUN python manage.py collectstatic --noinput
+# Skip collectstatic - staticfiles app not installed
 
 # Expose port
 EXPOSE 8000
