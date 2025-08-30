@@ -1,6 +1,21 @@
-# Online Judge System
+# 🏆 CodeMaster - Online Judge Platform
+
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Railway-brightgreen)](https://codemaster-onlinejudge-production.up.railway.app/)
+[![Django](https://img.shields.io/badge/Django-5.2.4-green)](https://djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue)](https://python.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+
+**🌐 Live Production App**: [https://codemaster-onlinejudge-production.up.railway.app/](https://codemaster-onlinejudge-production.up.railway.app/)
 
 A comprehensive Django-based Online Judge platform for programming contests and practice. This system allows users to submit code solutions in multiple programming languages and provides automated judging with real-time feedback.
+
+## 🎯 Live Demo
+
+**Try it now**: [CodeMaster Online Judge](https://codemaster-onlinejudge-production.up.railway.app/)
+
+**Test Credentials:**
+- Email: `admin@example.com`
+- Password: `admin123`
 
 ## Table of Contents
 
@@ -16,40 +31,44 @@ A comprehensive Django-based Online Judge platform for programming contests and 
 - [Contributing](#contributing)
 - [License](#license)
 
-## Features
+## ✨ Features
 
-### Core Functionality
-- **User Management**: Secure user registration, authentication, and profile management
-- **Problem Management**: Create, edit, and organize programming problems with test cases
-- **Multi-language Support**: Support for Python, C++, Java, and C programming languages
-- **Automated Judging**: Real-time code execution and evaluation against test cases
-- **Submission History**: Track and review all user submissions with detailed results
-- **Admin Interface**: Comprehensive admin panel for managing problems and users
+### 🔐 Authentication & User Management
+- **JWT Authentication**: Secure token-based authentication system
+- **User Profiles**: Comprehensive user profiles with statistics tracking
+- **Registration/Login**: Seamless signup and login experience
+- **Admin Interface**: Powerful Django admin panel for user management
 
-### User Experience
-- **Responsive Design**: Mobile-friendly interface using Bootstrap 5
-- **Real-time Updates**: AJAX-powered status updates for pending submissions
-- **Intuitive Navigation**: Clean and professional user interface
-- **Sample Test Cases**: Display sample inputs and outputs for each problem
-- **Submission Statistics**: Track solved problems and completion rates
+### 💻 Problem Solving Platform
+- **Multi-language Support**: Python, C++, Java, and C programming languages
+- **Problem Library**: Diverse collection of coding challenges
+- **Difficulty Levels**: Problems categorized by complexity
+- **Sample Test Cases**: Clear examples for each problem
 
-### Judging System
-- **Multiple Verdicts**: Support for Accepted, Wrong Answer, Time Limit Exceeded, Runtime Error, and Compilation Error
-- **Secure Execution**: Sandboxed code execution with timeout and resource limits
-- **Performance Metrics**: Track execution time and memory usage
-- **Detailed Feedback**: Comprehensive error messages and debugging information
+### ⚡ Real-time Code Judging
+- **Instant Feedback**: Automated judging with immediate results
+- **Multiple Verdicts**: Accepted, Wrong Answer, TLE, Runtime Error, Compilation Error
+- **Performance Metrics**: Execution time and memory usage tracking
+- **Detailed Output**: Comprehensive error messages and debugging info
+
+### 🎨 Modern User Experience
+- **Responsive Design**: Mobile-friendly Bootstrap 5 interface
+- **Real-time Updates**: AJAX-powered submission status updates
+- **Professional UI**: Clean and intuitive navigation
+- **Progress Tracking**: Monitor solved problems and completion rates
 
 ## Technology Stack
 
 | Component | Technology | Version | Purpose |
 |-----------|------------|---------|---------|
-| Backend Framework | Django | 5.2.4 | Web application framework |
-| Database | SQLite3 | Default | Development database |
-| Frontend | HTML/CSS/JavaScript | - | User interface |
-| CSS Framework | Bootstrap | 5.3.0 | Responsive design |
-| Icons | Font Awesome | 6.0.0 | UI icons |
-| Code Execution | Python subprocess | - | Code judging engine |
-| Authentication | Django Auth | Built-in | User management |
+| **Backend** | Django | 5.2.4 | Web application framework |
+| **Database** | PostgreSQL/SQLite | - | Production/Development database |
+| **Authentication** | JWT + Django Auth | - | Secure user authentication |
+| **API** | Django REST Framework | - | RESTful API endpoints |
+| **Frontend** | Bootstrap 5 + JavaScript | 5.3.0 | Responsive user interface |
+| **Code Execution** | Python subprocess | - | Multi-language code judging |
+| **Deployment** | Railway + Docker | - | Cloud hosting platform |
+| **Static Files** | WhiteNoise | - | Static file serving |
 
 ## System Architecture
 
@@ -96,56 +115,45 @@ The system uses four main models:
 4. **TestCase**: Input/output pairs for problem validation
 5. **Submission**: User code submissions with results and metadata
 
-## Installation
+## 🛠️ Installation
 
 ### Prerequisites
 
-- Python 3.11 or higher
-- pip (Python package installer)
-- Git (for version control)
+- **Python 3.11+** 
+- **pip** (Python package installer)
+- **Git** (for version control)
 
-### Step-by-Step Installation
+### Quick Start
 
 1. **Clone the Repository**
    ```bash
-   git clone <repository-url>
-   cd online_judge_project
+   git clone https://github.com/MadhuKarampudi/CodeMaster-online_Judge-.git
+   cd CodeMaster-online_Judge-
    ```
 
 2. **Create Virtual Environment**
    ```bash
-   python3.11 -m venv online_judge_env
-   source online_judge_env/bin/activate  # On Windows: online_judge_env\Scripts\activate
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install Dependencies**
    ```bash
-   pip install django
+   pip install -r requirements.txt
    ```
 
 4. **Database Setup**
    ```bash
-   python manage.py makemigrations
    python manage.py migrate
-   ```
-
-5. **Create Superuser**
-   ```bash
    python manage.py createsuperuser
    ```
 
-6. **Load Sample Data** (Optional)
-   ```bash
-   python manage.py shell
-   # Run the sample data creation script from the documentation
-   ```
-
-7. **Start Development Server**
+5. **Start Development Server**
    ```bash
    python manage.py runserver
    ```
 
-The application will be available at `http://localhost:8000`.
+**🌐 Local Access**: `http://localhost:8000`
 
 ## Configuration
 
@@ -245,13 +253,55 @@ LANGUAGE_CONFIGS = {
    - Monitor system performance and resource usage
    - Manage database and file storage
 
-## API Documentation
+## 📚 API Documentation
 
-### Submission Status API
+### 🔐 JWT Authentication API
+
+**Base URL**: `https://codemaster-onlinejudge-production.up.railway.app/api/auth/`
+
+#### Login Endpoint
+```http
+POST /api/auth/login/
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "password": "password123"
+}
+```
+
+**Response**:
+```json
+{
+    "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "user": {
+        "id": 1,
+        "email": "user@example.com",
+        "first_name": "John",
+        "last_name": "Doe"
+    }
+}
+```
+
+#### Signup Endpoint
+```http
+POST /api/auth/signup/
+Content-Type: application/json
+
+{
+    "email": "newuser@example.com",
+    "password": "password123",
+    "first_name": "Jane",
+    "last_name": "Smith"
+}
+```
+
+### 📊 Submission Status API
 
 **Endpoint**: `/submissions/api/status/<int:submission_id>/`
 **Method**: GET
-**Authentication**: Required (user must own the submission)
+**Authentication**: Required (JWT token or session)
 
 **Response Format**:
 ```json
@@ -288,29 +338,37 @@ LANGUAGE_CONFIGS = {
 | `/submissions/submit/<int:problem_id>/` | SubmitCodeView | Submit solution |
 | `/admin/` | Django Admin | Administrative interface |
 
-## Deployment
+## 🚀 Deployment
 
-### Railway Deployment
+### 🌐 Live Production Deployment
 
-This project is configured for easy deployment on Railway:
+**✅ Currently Deployed**: [https://codemaster-onlinejudge-production.up.railway.app/](https://codemaster-onlinejudge-production.up.railway.app/)
 
-1. **Connect Repository**
-   - Connect your GitHub repository to Railway
-   - Railway will automatically detect the Django project
+### Railway Deployment (Recommended)
+
+This project is optimized for Railway deployment with automatic CI/CD:
+
+1. **One-Click Deploy**
+   ```bash
+   # Fork this repository and connect to Railway
+   # Railway will automatically deploy from your GitHub repo
+   ```
 
 2. **Environment Variables**
-   Set these variables in Railway dashboard:
-   ```
+   Set these in Railway dashboard:
+   ```env
    SECRET_KEY=your-secret-key-here
    DEBUG=False
-   DATABASE_URL=postgresql://... (Railway provides this)
+   DATABASE_URL=postgresql://... (Railway provides this automatically)
    ALLOWED_HOSTS=your-domain.railway.app
    ```
 
-3. **Automatic Deployment**
-   - Railway uses the `Procfile` and `railway.json` for deployment
-   - Database migrations run automatically via release command
-   - Static files collected automatically
+3. **Automatic Features**
+   - ✅ **Auto-deployment** on every GitHub push
+   - ✅ **Database migrations** run automatically
+   - ✅ **Static files** collected and served
+   - ✅ **SSL certificate** provided by Railway
+   - ✅ **Custom domain** support available
 
 ### Production Deployment
 
@@ -464,6 +522,50 @@ For questions, issues, or contributions:
 - Check the documentation for common solutions
 
 ---
+
+## 🌟 Project Status
+
+**🚀 Production Ready**: Fully deployed and operational on Railway  
+**🔗 Live URL**: [https://codemaster-onlinejudge-production.up.railway.app/](https://codemaster-onlinejudge-production.up.railway.app/)  
+**📈 Status**: Active and maintained  
+**🔄 CI/CD**: Automatic deployment from GitHub  
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+### Development Guidelines
+- Follow PEP 8 for Python code
+- Add tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Madhu Karampudi**
+- GitHub: [@MadhuKarampudi](https://github.com/MadhuKarampudi)
+- Project: [CodeMaster Online Judge](https://github.com/MadhuKarampudi/CodeMaster-online_Judge-)
+
+## 🙏 Acknowledgments
+
+- Django community for the excellent framework
+- Railway for seamless deployment platform
+- Bootstrap team for the responsive UI framework
+- All contributors and users of this platform
+
+---
+
+**⭐ If you find this project helpful, please give it a star!**
 
 **Built with ❤️ using Django and Python**
 
