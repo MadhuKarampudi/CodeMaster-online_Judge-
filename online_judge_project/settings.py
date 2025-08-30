@@ -12,8 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
-import dj_database_url
 from datetime import timedelta
+try:
+    import dj_database_url
+except ImportError:
+    dj_database_url = None
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',  # Required for allauth
 
+    # Local apps - users must be first for custom user model
+    'users',
+    
     # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
@@ -53,8 +59,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
 
-    # Local apps
-    'users',
+    # Other local apps
     'problems',
     'submissions',
 ]
@@ -95,12 +100,20 @@ WSGI_APPLICATION = 'online_judge_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "data" / "db.sqlite3"}',
-        conn_max_age=600,
-    )
-}
+if dj_database_url:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=f'sqlite:///{BASE_DIR / "data" / "db.sqlite3"}',
+            conn_max_age=600,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'data' / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -176,6 +189,7 @@ REST_FRAMEWORK = {
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
+
 
 # Simple JWT configuration
 SIMPLE_JWT = {
