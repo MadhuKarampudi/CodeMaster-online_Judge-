@@ -3,9 +3,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
+from .models import User
 from django.db.models import Q, Count
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import UserProfile
 from .serializers import (
@@ -384,6 +384,130 @@ def user_statistics(request):
         'users_with_submissions': users_with_submissions,
         'top_users': top_users
     })
+
+
+@api_view(['POST'])
+@permission_classes([])
+def login_api(request):
+    """
+    JWT Login API endpoint.
+    POST: Authenticate user and return JWT tokens
+    """
+    email = request.data.get('email')
+    password = request.data.get('password')
+    
+    if not email or not password:
+        return Response({
+            'error': 'Email and password are required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    user = authenticate(request, username=email, password=password)
+    
+    if user:
+        if not user.is_active:
+            return Response({
+                'error': 'Account is disabled'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        refresh = RefreshToken.for_user(user)
+        
+        # Create or get user profile
+        profile, created = UserProfile.objects.get_or_create(
+            user=user,
+            defaults={
+                'bio': '',
+                'location': '',
+                'website': '',
+                'birth_date': None,
+                'avatar': None
+            }
+        )
+        
+        # Log the user in for Django session auth with backend
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_staff': user.is_staff,
+                'is_superuser': user.is_superuser,
+                'date_joined': user.date_joined
+            }
+        }, status=status.HTTP_200_OK)
+    
+    return Response({
+        'error': 'Invalid email or password'
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([])
+def signup_api(request):
+    """
+    JWT Signup API endpoint.
+    POST: Create new user and return JWT tokens
+    """
+    print(f"Signup request data: {request.data}")
+    print(f"Request POST: {request.POST}")
+    
+    # Try both request.data (JSON) and request.POST (form data)
+    email = request.data.get('email') or request.POST.get('email')
+    password = request.data.get('password') or request.POST.get('password1') or request.POST.get('password')
+    first_name = request.data.get('first_name', '') or request.POST.get('first_name', '')
+    last_name = request.data.get('last_name', '') or request.POST.get('last_name', '')
+    
+    print(f"Parsed - email: {email}, password: {'***' if password else None}, first_name: {first_name}, last_name: {last_name}")
+    
+    if not email or not password:
+        return Response({
+            'error': 'Email and password are required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    if User.objects.filter(email=email).exists():
+        return Response({
+            'error': 'User with this email already exists'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.create_user(
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+        
+        # Get or create user profile
+        profile, created = UserProfile.objects.get_or_create(user=user)
+        
+        # Log the user in for Django session auth with backend
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = refresh.access_token
+        
+        return Response({
+            'access': str(access_token),
+            'refresh': str(refresh),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_staff': user.is_staff,
+                'date_joined': user.date_joined
+            }
+        }, status=status.HTTP_201_CREATED)
+    
+    except Exception as e:
+        return Response({
+            'error': f'Failed to create user: {str(e)}'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

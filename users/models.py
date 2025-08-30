@@ -1,18 +1,60 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from datetime import date, timedelta
+
+class UserManager(BaseUserManager):
+    def create_user(self, email, first_name='', last_name='', password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, first_name=first_name, last_name=last_name, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, first_name='', last_name='', password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+            
+        return self.create_user(email, first_name, last_name, password, **extra_fields)
 
 class User(AbstractUser):
     """Custom user model"""
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
+    username = models.CharField(max_length=150, blank=True, null=True)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
+    
+    objects = UserManager()
+    
+    # Fix reverse accessor conflicts
+    groups = models.ManyToManyField(
+        'auth.Group',
+        verbose_name='groups',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        related_name='custom_user_set',
+        related_query_name='custom_user',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        verbose_name='user permissions',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_name='custom_user_set',
+        related_query_name='custom_user',
+    )
     
     def __str__(self):
         return self.email
@@ -73,15 +115,9 @@ class UserProfile(models.Model):
             self.update_streak(submission)
 
 
-# Signal to create/save UserProfile when a User is created/saved
+# Signal to create UserProfile when a User is created
 @receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
+def create_user_profile(sender, instance, created, **kwargs):
+    """Create UserProfile when a new User is created"""
     if created:
-        UserProfile.objects.create(user=instance)
-    # Ensure userprofile exists before saving, especially if it was just created
-    # This line might cause issues if userprofile is not yet created or if it's already saved
-    # For now, let's ensure it's not called if 'created' is True and it was just created
-    if not created and hasattr(instance, 'userprofile'):
-        instance.userprofile.save()
-    elif created:
-        pass # Do nothing, it's already saved
+        UserProfile.objects.get_or_create(user=instance)

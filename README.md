@@ -290,9 +290,31 @@ LANGUAGE_CONFIGS = {
 
 ## Deployment
 
+### Railway Deployment
+
+This project is configured for easy deployment on Railway:
+
+1. **Connect Repository**
+   - Connect your GitHub repository to Railway
+   - Railway will automatically detect the Django project
+
+2. **Environment Variables**
+   Set these variables in Railway dashboard:
+   ```
+   SECRET_KEY=your-secret-key-here
+   DEBUG=False
+   DATABASE_URL=postgresql://... (Railway provides this)
+   ALLOWED_HOSTS=your-domain.railway.app
+   ```
+
+3. **Automatic Deployment**
+   - Railway uses the `Procfile` and `railway.json` for deployment
+   - Database migrations run automatically via release command
+   - Static files collected automatically
+
 ### Production Deployment
 
-For production deployment, consider the following steps:
+For other production deployments:
 
 1. **Environment Configuration**
    ```bash
@@ -304,8 +326,7 @@ For production deployment, consider the following steps:
 
 2. **Database Migration**
    ```bash
-   # Use PostgreSQL or MySQL for production
-   pip install psycopg2-binary  # For PostgreSQL
+   # Use PostgreSQL for production (Railway provides this)
    python manage.py migrate
    ```
 
@@ -313,17 +334,6 @@ For production deployment, consider the following steps:
    ```bash
    python manage.py collectstatic
    ```
-
-4. **Web Server Configuration**
-   - Use Gunicorn or uWSGI as WSGI server
-   - Configure Nginx as reverse proxy
-   - Set up SSL certificates for HTTPS
-
-5. **Security Hardening**
-   - Configure firewall rules
-   - Set up proper file permissions
-   - Enable security headers
-   - Configure CSRF and XSS protection
 
 ### Docker Deployment
 

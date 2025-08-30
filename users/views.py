@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, DetailView
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import CustomUserCreationForm
@@ -29,6 +30,17 @@ class ProfileView(LoginRequiredMixin, DetailView):
     context_object_name = 'profile'
 
     def get_object(self, queryset=None):
-        print(f"Attempting to retrieve profile for user: {self.request.user.username}")
-        return self.request.user.userprofile
+        from .models import UserProfile
+        
+        # Use get_or_create to handle profile creation safely
+        profile, created = UserProfile.objects.get_or_create(
+            user=self.request.user,
+            defaults={
+                'bio': '',
+                'location': '',
+                'birth_date': None,
+                'avatar': None
+            }
+        )
+        return profile
 

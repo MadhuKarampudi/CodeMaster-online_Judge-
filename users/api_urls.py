@@ -23,7 +23,9 @@ urlpatterns = [
     path('activity/', api_views.user_activity, name='user-activity'),
     path('<int:pk>/activity/', api_views.user_activity, name='user-activity-by-id'),
     
-    # Token management
+    # JWT Authentication endpoints
+    path('login/', api_views.login_api, name='login-api'),
+    path('signup/', api_views.signup_api, name='signup-api'),
     path('refresh-token/', api_views.refresh_token, name='refresh-token'),
 ]
 
