@@ -297,9 +297,17 @@ class SecureCodeJudge:
 def judge_submission(submission):
     """
     Judges a submission. This function is designed to be called from a thread.
+    Automatically uses Judge0 API if JUDGE0_API_KEY is configured, otherwise uses Docker.
     """
     try:
-        judge = SecureCodeJudge(submission)
+        # Try Judge0 if API key is configured (Vercel deployment)
+        if os.environ.get('JUDGE0_API_KEY'):
+            from .judge0_executor import Judge0Executor
+            judge = Judge0Executor(submission)
+        else:
+            # Fall back to Docker-based judging
+            judge = SecureCodeJudge(submission)
+        
         judge.judge()
     except Exception as e:
         print(f"FATAL Error judging submission {submission.id}: {e}")

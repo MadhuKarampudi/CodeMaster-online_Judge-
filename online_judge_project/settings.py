@@ -31,7 +31,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure--+-swv*oh+zy2ziv3fx(0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['*', 'codemaster-onlinejudge-production.up.railway.app', '.railway.app', 'localhost', '127.0.0.1']
+# Allow hosts for various deployment platforms
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+# Always allow localhost for development
+if not DEBUG:
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '.railway.app', '.vercel.app'])
+    # Add custom domain if provided
+    CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN', '')
+    if CUSTOM_DOMAIN:
+        ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
 
 
 # Application definition
@@ -232,13 +240,31 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8080",
 ]
 
+# Add Vercel and Railway domains in production
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS.extend([
+        'https://codemaster-onlinejudge-production.up.railway.app',
+        'https://*.railway.app',
+        'https://*.vercel.app',
+    ])
+    # Add custom domain if provided
+    CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN', '')
+    if CUSTOM_DOMAIN:
+        CORS_ALLOWED_ORIGINS.append(f'https://{CUSTOM_DOMAIN}')
+
 CORS_ALLOW_CREDENTIALS = True
 
-# CSRF Settings for Railway deployment
+# CSRF Settings for Railway and Vercel deployment
 CSRF_TRUSTED_ORIGINS = [
     'https://codemaster-onlinejudge-production.up.railway.app',
     'https://*.railway.app',
+    'https://*.vercel.app',
 ]
+
+# Add custom domain if provided
+CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN', '')
+if CUSTOM_DOMAIN:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{CUSTOM_DOMAIN}')
 
 # Security settings for production
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
